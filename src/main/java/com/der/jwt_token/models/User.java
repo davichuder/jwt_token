@@ -49,9 +49,10 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, Set<Role> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.roles = roles;
     }
 }
