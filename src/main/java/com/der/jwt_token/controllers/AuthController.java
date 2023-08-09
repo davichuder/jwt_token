@@ -1,16 +1,13 @@
 package com.der.jwt_token.controllers;
 
-import java.util.stream.Collectors;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +20,11 @@ import com.der.jwt_token.exceptions.RolesEmptyException;
 import com.der.jwt_token.exceptions.UsernameUsedException;
 import com.der.jwt_token.payload.request.LoginRequest;
 import com.der.jwt_token.payload.request.SignUpRequest;
+import com.der.jwt_token.payload.response.LoginResponse;
 import com.der.jwt_token.payload.response.MessageResponse;
+import com.der.jwt_token.security.auth.UserDetailsImpl;
+import com.der.jwt_token.security.jwt.AccessTokenService;
 import com.der.jwt_token.security.jwt.RefreshTokenService;
-import com.der.jwt_token.security.jwt.JwtTokenService;
 import com.der.jwt_token.services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +41,7 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    JwtTokenService jwtTokenService;
+    AccessTokenService accessTokenService;
 
     @Autowired
     RefreshTokenService refreshTokenService;
@@ -62,15 +61,16 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        // ResponseCookie jwtCookie = jwtTokenService.generateJwtCookie(userDetails);
+        ResponseCookie jwtCookie = accessTokenService.generateAccessJwtCookie(userDetails.getId());
 
-        // List<String> roles = userDetails.getAuthorities().stream()
-        //         .map(item -> item.getAuthority())
-        //         .collect(Collectors.toList());
+        ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshJwtCookie(userDetails.getId());
 
-        return null;
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .body(new LoginResponse(userDetails));
     }
 
     @PostMapping("/refreshtoken")

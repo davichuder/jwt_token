@@ -1,11 +1,17 @@
 package com.der.jwt_token.security.jwt;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 
 public class RefreshTokenService extends JwtTokenService {
-    @Value("${jwtRefreshExpirationMs}")
-    private Long refreshTokenDurationMs;
-
     @Value("${jwtRefreshCookieName}")
-    private String jwtRefreshCookie;
+    private String jwtRefreshCookieName;
+
+    @Value("${jwtRefreshExpirationMs}")
+    private int refreshTokenDurationMs;
+
+    public ResponseCookie generateRefreshJwtCookie(Long id) {
+        String jwtToken = generateJwtTokenFromSubject(Long.toString(id), refreshTokenDurationMs);
+        return generateCookieValueByName(jwtRefreshCookieName, jwtToken, accessPathCookie);
+    }
 }

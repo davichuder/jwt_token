@@ -22,13 +22,15 @@ public class JwtTokenService {
     @Value("${jwtSecret}")
     private String jwtSecret;
 
-    private Key key() {
+    protected final String accessPathCookie = "/api/auth/";
+
+    protected Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    protected String generateJwtTokenFromId(Long id, int msDuration) {
+    protected String generateJwtTokenFromSubject(String subject, int msDuration) {
         return Jwts.builder()
-                .setSubject(Long.toString(id))
+                .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + msDuration))
                 .signWith(key(), SignatureAlgorithm.HS256)

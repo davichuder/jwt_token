@@ -3,17 +3,15 @@ package com.der.jwt_token.security.jwt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 
-final class AccessTokenService extends JwtTokenService {
+public class AccessTokenService extends JwtTokenService {
     @Value("${jwtCookieName}")
-    private String jwtCookie;
-    
+    private String jwtCookieName;
+
     @Value("${jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    private String accessPathCookie = "/api/auth/";
-
-    public ResponseCookie generateAccessCookie(Long id){
-        String jwtToken = generateJwtTokenFromId(id, jwtExpirationMs);
-        return generateCookieValueByName(jwtCookie, jwtToken, accessPathCookie);
+    public ResponseCookie generateAccessJwtCookie(Long id) {
+        String jwtToken = generateJwtTokenFromSubject(Long.toString(id), jwtExpirationMs);
+        return generateCookieValueByName(jwtCookieName, jwtToken, accessPathCookie);
     }
 }
