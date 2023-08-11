@@ -14,4 +14,13 @@ public class AccessTokenService extends JwtTokenService {
         String jwtToken = generateJwtTokenFromSubject(Long.toString(id), jwtExpirationMs);
         return generateCookieValueByName(jwtCookieName, jwtToken, accessPathCookie);
     }
+
+    public ResponseCookie generateAccessJwtCookie(String id) {
+        String jwtToken = generateJwtTokenFromSubject(id, jwtExpirationMs);
+        return generateCookieValueByName(jwtCookieName, jwtToken, accessPathCookie);
+    }
+
+    public ResponseCookie getCleanJwtAccessCookie() {
+        return cleanCookie(jwtCookieName, accessPathCookie);
+    }
 }

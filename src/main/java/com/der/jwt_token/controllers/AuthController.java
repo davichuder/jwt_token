@@ -75,11 +75,30 @@ public class AuthController {
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
-        return null;
+        String refreshToken = refreshTokenService.getJwtRefreshFromCookies(request);
+
+        if (refreshToken != null && refreshTokenService.validateJwtToken(refreshToken)) {
+            String id = refreshTokenService.getSubjectFromJwtToken(refreshToken);
+            ResponseCookie jwtCookie = accessTokenService.generateAccessJwtCookie(id);
+            ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshJwtCookie(id);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(new MessageResponse("Token is refreshed successfully!"));
+        }
+
+        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is not valid!"));
     }
 
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        return null;
+        ResponseCookie jwtAccessCookie = accessTokenService.getCleanJwtAccessCookie();
+        ResponseCookie jwtRefreshCookie = refreshTokenService.getCleanJwtRefreshCookie();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtAccessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .body(new MessageResponse("You've been signed out!"));
     }
 }
