@@ -30,9 +30,9 @@ import com.der.jwt_token.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
     @Autowired
     UserService userService;
@@ -63,9 +63,9 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = accessTokenService.generateAccessJwtCookie(userDetails.getId());
+        ResponseCookie jwtCookie = accessTokenService.generateAccessTokenCookie(userDetails.getId());
 
-        ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshJwtCookie(userDetails.getId());
+        ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshTokenCookie(userDetails.getId());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -75,12 +75,12 @@ public class AuthController {
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
-        String refreshToken = refreshTokenService.getJwtRefreshFromCookies(request);
+        String refreshToken = refreshTokenService.getRefreshTokenFromCookies(request);
 
         if (refreshToken != null && refreshTokenService.validateJwtToken(refreshToken)) {
             String id = refreshTokenService.getSubjectFromJwtToken(refreshToken);
-            ResponseCookie jwtCookie = accessTokenService.generateAccessJwtCookie(id);
-            ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshJwtCookie(id);
+            ResponseCookie jwtCookie = accessTokenService.generateAccessTokenCookie(id);
+            ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshTokenCookie(id);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -93,8 +93,8 @@ public class AuthController {
 
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        ResponseCookie jwtAccessCookie = accessTokenService.getCleanJwtAccessCookie();
-        ResponseCookie jwtRefreshCookie = refreshTokenService.getCleanJwtRefreshCookie();
+        ResponseCookie jwtAccessCookie = accessTokenService.cleanAccessTokenCookie();
+        ResponseCookie jwtRefreshCookie = refreshTokenService.cleanRefreshTokenCookie();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtAccessCookie.toString())
