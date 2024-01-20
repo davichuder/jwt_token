@@ -25,8 +25,6 @@ public class JwtTokenService {
     @Value("${jwtSecret}")
     private String jwtSecret;
 
-    protected final String accessPathCookie = "/api/auth/";
-
     protected Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
@@ -57,6 +55,7 @@ public class JwtTokenService {
             return null;
         }
     }
+    
 
     protected ResponseCookie cleanCookie(String nameCookie, String path) {
         ResponseCookie cookie = ResponseCookie.from(nameCookie, null)

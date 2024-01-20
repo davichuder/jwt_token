@@ -33,11 +33,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String jwt = parseJwt(request);
+            String jwt = accessTokenService.getAccessTokenFromCookies(request);
             if (jwt != null && accessTokenService.validateJwtToken(jwt)) {
                 String username = accessTokenService.getSubjectFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsImplService.loadUserByUsername(username);
-
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -51,10 +50,5 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             logger.error("Cannot set user authentication: {}", e);
         }
         filterChain.doFilter(request, response);
-    }
-
-    private String parseJwt(HttpServletRequest request) {
-        String jwt = accessTokenService.getAccessTokenFromCookies(request);
-        return jwt;
     }
 }

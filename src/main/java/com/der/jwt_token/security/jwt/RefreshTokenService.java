@@ -14,14 +14,16 @@ public class RefreshTokenService extends JwtTokenService {
     @Value("${jwtRefreshExpirationMs}")
     private int refreshTokenDurationMs;
 
+    protected final String refreshPathCookie = "/api/auth/refreshtoken";
+
     public ResponseCookie generateRefreshTokenCookie(Long id) {
         String jwtToken = generateJwtTokenFromSubject(Long.toString(id), refreshTokenDurationMs);
-        return generateCookieValueByName(jwtRefreshCookieName, jwtToken, accessPathCookie);
+        return generateCookieValueByName(jwtRefreshCookieName, jwtToken, refreshPathCookie);
     }
 
     public ResponseCookie generateRefreshTokenCookie(String id) {
         String jwtToken = generateJwtTokenFromSubject(id, refreshTokenDurationMs);
-        return generateCookieValueByName(jwtRefreshCookieName, jwtToken, accessPathCookie);
+        return generateCookieValueByName(jwtRefreshCookieName, jwtToken, refreshPathCookie);
     }
 
     public String getRefreshTokenFromCookies(HttpServletRequest request) {
@@ -29,6 +31,6 @@ public class RefreshTokenService extends JwtTokenService {
     }
 
     public ResponseCookie cleanRefreshTokenCookie() {
-        return cleanCookie(jwtRefreshCookieName, accessPathCookie);
+        return cleanCookie(jwtRefreshCookieName, refreshPathCookie);
     }
 }

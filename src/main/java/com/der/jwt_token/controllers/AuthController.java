@@ -55,17 +55,18 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginRequest.username(), loginRequest.password());
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(),
-                        loginRequest.password()));
+                .authenticate(authenticationToken);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = accessTokenService.generateAccessTokenCookie(userDetails.getId());
+        ResponseCookie jwtCookie = accessTokenService.generateAccessTokenCookie(userDetails.getUsername());
 
-        ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshTokenCookie(userDetails.getId());
+        ResponseCookie jwtRefreshCookie = refreshTokenService.generateRefreshTokenCookie(userDetails.getUsername());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -76,6 +77,7 @@ public class AuthController {
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
         String refreshToken = refreshTokenService.getRefreshTokenFromCookies(request);
+        System.out.println(refreshToken);
 
         if (refreshToken != null && refreshTokenService.validateJwtToken(refreshToken)) {
             String id = refreshTokenService.getSubjectFromJwtToken(refreshToken);
