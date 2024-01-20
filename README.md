@@ -99,7 +99,6 @@ Una vez hecho esto ingrese a la siguiente direccion, y pruebe las funcionalidade
 ```bash
 http://localhost:8081/
 ```
-## Authors
-
-- [David Rolón]([https://www.linkedin.com/in/david-emanuel-rolon/])
+## Autor
+- [David Rolón](https://www.linkedin.com/in/david-emanuel-rolon/)
 
