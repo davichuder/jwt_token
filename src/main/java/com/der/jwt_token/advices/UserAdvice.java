@@ -2,6 +2,7 @@ package com.der.jwt_token.advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -46,6 +47,16 @@ public class UserAdvice {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
+                request.getDescription(false));
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(MethodArgumentNotValidException e,
+            WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                e.getBody().getDetail(),
                 request.getDescription(false));
         return ResponseEntity.badRequest().body(errorResponse);
     }
