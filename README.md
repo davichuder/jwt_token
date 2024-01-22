@@ -30,7 +30,7 @@ No se realiza un CRUD debido a que no es el punto principal de la misma.
 #### Registro
 
 ```http
-  GET /api/auth/signup
+  POST /api/auth/signup
 ```
 |Parametro|Tipo|Descripción y extra|
 |:-|:-|:-|
@@ -41,7 +41,7 @@ No se realiza un CRUD debido a que no es el punto principal de la misma.
 
 #### Logueo
 ```http
-  GET /api/auth/signin
+  POST /api/auth/signin
 ```
 |Parametro|Tipo|Descripción y extra|
 |:-|:-|:-|
@@ -50,7 +50,7 @@ No se realiza un CRUD debido a que no es el punto principal de la misma.
 
 #### Actualizacion de tokens
 ```http
-  GET /api/auth/refreshtoken
+  POST /api/auth/refreshtoken
 ```
 |Cookie|Tipo|Ruta|Descripción|
 |:-|:-|:-|:-|
@@ -58,7 +58,7 @@ No se realiza un CRUD debido a que no es el punto principal de la misma.
 
 #### Deslogueo
 ```http
-  GET /api/auth/signout
+  POST /api/auth/signout
 ```
 
 #### Test de roles
