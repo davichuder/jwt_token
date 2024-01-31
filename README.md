@@ -102,3 +102,8 @@ http://localhost:8081/
 ## Autor
 - [David Rolón](https://www.linkedin.com/in/david-emanuel-rolon/)
 
+## Referencias
+https://www.bezkoder.com/spring-security-refresh-token/
+https://github.com/davichuder/Challenge-4---Foro-Alura
+https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
+https://medium.com/@espinozajge/protegiendo-tu-aplicaci%C3%B3n-web-con-spring-security-y-autenticaci%C3%B3n-basada-en-tokens-jwt-1321cbe4c4c3
